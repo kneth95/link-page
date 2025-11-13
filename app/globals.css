@@ -24,3 +24,97 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Add to your global CSS or inside a <style jsx global> tag */
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .product-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+}
+
+.sticky-filter {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 100;
+  padding: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+body {
+  background: #fff6fa;
+  color: #4a2c3a;
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+}
+
+header {
+  background: #ffe4ec;
+  border-bottom: 1px solid #ffd6e6;
+}
+
+h1 {
+  color: #d72660;
+}
+
+.sticky-filter {
+  background: #ffe4ec;
+  border-bottom: 1px solid #ffd6e6;
+  box-shadow: 0 2px 8px rgba(215,38,96,0.04);
+}
+
+.product-list {
+  background: transparent;
+}
+
+.product-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(215,38,96,0.07);
+  border: 1px solid #ffd6e6;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 24px rgba(215,38,96,0.12);
+  border-color: #d72660;
+}
+
+.product-category {
+  background: #ffe4ec;
+  color: #d72660;
+}
+
+button {
+  background: #ffd6e6;
+  color: #d72660;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+button:hover {
+  background: #d72660;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .sticky-filter {
+    padding: 0.7rem 0.2rem;
+  }
+  .product-list {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding: 0.5rem;
+  }
+}
