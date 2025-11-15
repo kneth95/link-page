@@ -150,15 +150,14 @@ svg { display: inline-block !important; }
 
 /* Make sure SVG stays centered and sized for the rectangular button */
 .icon-button svg {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: block !important;
 }
 
 /* Keep existing interaction rules (hover/focus/active/open) */
 .icon-button:hover {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 18px rgba(215,38,96,0.12);
   background-color: #fff;
   color: #d72660;
 }
@@ -178,7 +177,6 @@ svg { display: inline-block !important; }
 .icon-button.open,
 .icon-button[aria-pressed="true"] {
   transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 8px 24px rgba(215,38,96,0.14);
   background-color: #fff;
   color: #d72660;
 }
@@ -214,7 +212,7 @@ svg { display: inline-block !important; }
 }
 .sticky-filter .icon-button {
   flex: 0 0 auto;
-  margin-left: 4px;
+  margin-left: 0px;
 }
 
 /* target the inline search input (desktop uses absolute positioning) */
@@ -317,7 +315,7 @@ svg { display: inline-block !important; }
   flex: 0 0 auto;
   margin-left: 6px;
   height: 34px;
-  padding: 0 8px;
+  padding: 0 0;
   min-width: 34px;
 }
 
@@ -332,17 +330,36 @@ svg { display: inline-block !important; }
   }
 }
 
-/* Ensure popup search input always fills its popup row */
+/* Search row inside sticky-filter (new row under controls) */
+.sticky-filter .search-row {
+  width: 100%;
+  display: block;
+  padding: 0 20px 0px 20px;
+}
+
+.sticky-filter .search-inner {
+  width: min(980px, 96%);
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  pointer-events: auto;
+}
+
+/* Ensure popup input inside sticky-filter stretches and isn't constrained by other rules */
 .search-popup-input {
   flex: 1 !important;
   width: 100% !important;
   max-width: none !important;
-  min-width: 0 !important; /* important for flex children to shrink correctly */
+  min-width: 0 !important;
   box-sizing: border-box;
 }
 
-/* optional: slightly larger font in popup */
-.search-popup-input {
-  font-size: 1rem;
-  padding: 0.65rem 0.8rem;
+/* keep icon-button consistent inside search row */
+.sticky-filter .icon-button {
+  height: 32px;
+  padding: 0 10px;
+  min-width: 36px;
+  background-color: #00000000
+  ;
 }

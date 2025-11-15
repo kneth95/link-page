@@ -11,12 +11,8 @@ export default function Page() {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
-  const searchRef = useRef(null);
   const buttonRef = useRef(null);
   const inputRef = useRef(null);
-
-  // popup style for the floating search input (position: fixed so it doesn't affect layout)
-  const [popupStyle, setPopupStyle] = useState({ display: "none" });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -28,65 +24,14 @@ export default function Page() {
     fetchProducts();
   }, []);
 
-  // recompute popup position based on sticky-filter position (full-width row under sticky-filter)
-  const computePopupPosition = () => {
-    const sticky = document.querySelector(".sticky-filter");
-    let top = 64; // fallback
-    if (sticky) {
-      const rect = sticky.getBoundingClientRect();
-      top = Math.max(0, Math.round(rect.bottom));
-    }
-    setPopupStyle({
-      position: "fixed",
-      top: `${top}px`,
-      left: 0,
-      right: 0,
-      zIndex: 1200,
-      display: "flex",
-      justifyContent: "center",
-      padding: "0",            // no extra padding so inner bar can be full width
-      boxSizing: "border-box",
-      pointerEvents: "auto",   // allow clicks so overlay can catch outside clicks
-    });
-  };
-
-  // show / hide handling: compute popup position and focus input when opened
-  useEffect(() => {
-    if (showSearch) {
-      computePopupPosition();
-      // small timeout to ensure style applied before focusing
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 40);
-    } else {
-      setPopupStyle({ display: "none" });
-    }
-  }, [showSearch]);
-
-  // recompute position on resize/scroll while visible
-  useEffect(() => {
-    if (!showSearch) return;
-    const onResize = () => computePopupPosition();
-    const onScroll = () => computePopupPosition();
-    window.addEventListener("resize", onResize);
-    window.addEventListener("scroll", onScroll, true);
-    return () => {
-      window.removeEventListener("resize", onResize);
-      window.removeEventListener("scroll", onScroll, true);
-    };
-  }, [showSearch]);
-
-  // click outside to close popup
+  // close search when clicking outside the sticky-filter (but do NOT clear the query)
   useEffect(() => {
     if (!showSearch) return;
     const handler = (e) => {
-      if (
-        inputRef.current &&
-        !inputRef.current.contains(e.target) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(e.target)
-      ) {
-        setShowSearch(false);
+      const sticky = document.querySelector(".sticky-filter");
+      if (!sticky) return;
+      if (!sticky.contains(e.target)) {
+        setShowSearch(false); // do NOT clear search here per request
       }
     };
     document.addEventListener("mousedown", handler);
@@ -119,7 +64,7 @@ export default function Page() {
   return (
     <div>
       <Banner />
-      <div className="sticky-filter" style={{ textAlign: "center", padding: "0.75rem 1rem", zIndex: 130 }}>
+      <div className="sticky-filter" style={{ textAlign: "center", padding: "0.5rem 0", zIndex: 130 }}>
         <div style={{ display: "inline-flex", alignItems: "center", gap: 12 }}>
           <label htmlFor="category-select" style={{ marginRight: 6 }}>Category:</label>
 
@@ -137,104 +82,95 @@ export default function Page() {
             ))}
           </select>
 
-          {/* search icon (fixed-size rectangle) */}
+          {/* search icon (toggles the search row inside sticky-filter) */}
           <div style={{ position: "relative", display: "inline-block" }}>
-              <button
-                ref={buttonRef}
-                className={`icon-button ${showSearch ? "open" : ""}`}
-                aria-pressed={showSearch}
-                onClick={() => {
-                  setShowSearch(prev => {
-                    const next = !prev;
-                    if (!next) {
-                      // toggling off => clear the query
-                      setSearch("");
-                    } else {
-                      // toggling on => open and focus, do NOT clear
-                      computePopupPosition();
-                      setTimeout(() => inputRef.current?.focus(), 40);
-                    }
-                    return next;
-                  });
-                }}
-                aria-label={showSearch ? (search ? "Clear search" : "Close search") : "Open search"}
-              >
-                {showSearch && search ? (
-                  <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                    <path d="M18 6L6 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M6 6L18 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                    <circle cx="11" cy="11" r="6" stroke="currentColor" />
-                    <path d="M21 21L15 15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </button>
-
-              {/* floating search input: full-width row under sticky-filter (fixed, non-disruptive) */}
-              {showSearch && (
-                <div
-                  style={popupStyle}
-                  // clicking the overlay (outside the inner bar) closes the search
-                  onMouseDown={() => setShowSearch(false)} // do NOT clear search here per request
-                >
-                  {/* inner container stops propagation so clicks inside don't close */}
-                  <div
-                    onMouseDown={(e) => e.stopPropagation()}
-                    style={{
-                      /* make the search bar span the entire viewport width and use flex so input expands */
-                      width: "80vw",
-                      maxWidth: "600px",
-                      marginLeft: "calc(50% - 50vw)", // full-bleed
-                      pointerEvents: "auto",
-                      borderRadius: 0,
-                      padding: "12px 16px",
-                      boxShadow: "0 6px 18px rgba(215,38,96,0)",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <input
-                      ref={inputRef}
-                      autoFocus
-                      type="text"
-                      className="search-popup-input"
-                      placeholder="Search name or brand..."
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                      onKeyDown={e => {
-                        if (e.key === "Escape") {
-                          setShowSearch(false);
-                          // don't clear search
-                        } else if (e.key === "Enter") {
-                          e.preventDefault();
-                          setShowSearch(false); // close on Enter, keep query
-                        }
-                      }}
-                      style={{
-                        flex: 1,                 // take all available width of the popup row
-                        padding: "0.6rem 0.75rem",
-                        borderRadius: 20,
-                        border: "1px solid rgba(219,124,173,0.8)",
-                        fontSize: "1rem",
-                        outline: "none",
-                        boxSizing: "border-box",
-                        background: "linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.05))",
-                        backdropFilter: "blur(30px) saturate(180%)",
-                        WebkitBackdropFilter: "blur(30px) saturate(180%)",
-                        minWidth: 0,             // allow flex to shrink correctly
-                      }}
-                    />
-
-                    {/* Clear button inside the input area (does not close the popup) */}
-          
-                  </div>
-                </div>
+            <button
+              ref={buttonRef}
+              className={`icon-button ${showSearch ? "open" : ""}`}
+              aria-pressed={showSearch}
+              onClick={() => {
+                setShowSearch(prev => {
+                  const next = !prev;
+                  if (!next) {
+                    // toggling off via icon => clear the query
+                    setSearch("");
+                  } else {
+                    // toggling on => focus input (no clear)
+                    setTimeout(() => inputRef.current?.focus(), 40);
+                  }
+                  return next;
+                });
+              }}
+              aria-label={showSearch ? "Close search" : "Open search"}
+            >
+              {showSearch ? (
+                /* X / close icon when search row is active */
+                <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              ) : (
+                /* magnifier when search is closed */
+                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <circle cx="11" cy="11" r="6" stroke="currentColor" strokeWidth="2" />
+                  <path d="M21 21L15 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
               )}
-            </div>
+            </button>
+          </div>
         </div>
+
+        {/* new row: inline search bar inside sticky-filter under the controls */}
+        {showSearch && (
+          <div className="search-row" style={{ marginTop: 8 }}>
+            <div className="search-inner" style={{ width: "min(980px, 96%)", margin: "0 auto", display: "flex", gap: 8, alignItems: "center" }}>
+              <input
+                ref={inputRef}
+                autoFocus
+                type="text"
+                className="search-popup-input"
+                placeholder="Search name or brand..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === "Escape") {
+                    setShowSearch(false); // close on Escape, keep query
+                  } else if (e.key === "Enter") {
+                    e.preventDefault();
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  padding: "0.6rem 0.75rem",
+                  border: "1px solid rgba(219,124,173,0.8)",
+                  fontSize: "0.95rem",
+                  outline: "none",
+                  boxSizing: "border-box",
+                  minWidth: 0,
+                  background: "#fff",
+                  backdropFilter: "blur(30px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(30px) saturate(180%)",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(255,255,255,0.4)",
+                  
+                }}
+              />
+              {/* clear button inside the search row (clears query but doesn't close) */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSearch("");
+                  inputRef.current?.focus();
+                }}
+                aria-label="Clear search query"
+                className="icon-button"
+                style={{ height: 36, padding: "0 12px", minWidth: 36, fontSize: "0.9rem", fontWeight: 600 }}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="product-list">
