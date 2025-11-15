@@ -129,3 +129,63 @@ html, body {
 }
 
 svg { display: inline-block !important; }
+
+/* Search icon interactions */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;             /* fixed height */
+  padding: 0 10px;          /* rectangular shape (width flexible) */
+  min-width: 36px;          /* ensure clickable area */
+  border-radius: 8px;       /* slightly rounded rectangle */
+  border: 1px solid #ffd6e6;
+  background: #fff;
+  color: #d72660;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease, background-color 120ms ease, color 120ms ease;
+  will-change: transform, box-shadow;
+}
+
+/* Make sure SVG stays centered and sized for the rectangular button */
+.icon-button svg {
+  width: 18px;
+  height: 18px;
+  display: block !important;
+}
+
+/* Keep existing interaction rules (hover/focus/active/open) */
+.icon-button:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 18px rgba(215,38,96,0.12);
+  background-color: #fff;
+  color: #d72660;
+}
+
+.icon-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(215,38,96,0.12), 0 6px 18px rgba(215,38,96,0.12);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.icon-button:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 3px 10px rgba(215,38,96,0.10);
+  background-color: #fff0f4;
+}
+
+.icon-button.open,
+.icon-button[aria-pressed="true"] {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 24px rgba(215,38,96,0.14);
+  background-color: #fff;
+  color: #d72660;
+}
+
+/* ensure svg stroke uses button color */
+.icon-button svg,
+.icon-button svg * {
+  stroke: currentColor !important;
+  fill: none !important;
+}

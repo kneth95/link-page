@@ -2,15 +2,16 @@ import React from "react";
 
 export default function Banner() {
   const wrapper = {
+    position: "sticky",
     top: 0,
     zIndex: 120,
     color: "#4a2c3a",
-    backgroundImage: `url("https://unsplash.com/photos/pink-petaled-flowers-INvLInqJ-Ms")`,
+    backgroundImage: `url("/francesco-mazzoli-INvLInqJ-Ms-unsplash.jpg")`,
     backgroundSize: "cover",
     backgroundPosition: "center",
     padding: "1rem 0.75rem",
     boxShadow: "0 2px 12px rgba(215,38,96,0.06)",
-  };
+};
 
   const overlay = {
     background: "linear-gradient(0deg, rgba(255,244,249,0.9), rgba(255,244,249,0.6))",

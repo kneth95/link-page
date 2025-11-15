@@ -79,6 +79,8 @@ export default function Page() {
           {/* search icon / popup */}
           <div style={{ position: "relative", display: "inline-block" }}>
             <button
+              className={`icon-button ${showSearch ? "open" : ""}`}
+  aria-pressed={showSearch}
               onClick={() => {
                 if (!showSearch) {
                   setShowSearch(true);
@@ -93,30 +95,16 @@ export default function Page() {
                 }
               }}
               aria-label={showSearch ? (search ? "Clear search" : "Close search") : "Open search"}
-              style={{
-                height: 32,
-                width: 32,
-                borderRadius: 8,
-                border: "1px solid #ffd6e6",
-                background: "#fff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: "#d72660",
-                zIndex: 140,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.06)"
-              }}
             >
               {showSearch && search ? (
-                <svg style={{ display: "block" }} width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <path d="M18 6L6 18" stroke="#d72660" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
-                  <path d="M6 6L18 18" stroke="#d72660" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <path d="M18 6L6 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M6 6L18 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               ) : (
-                <svg style={{ display: "block" }} width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <circle cx="11" cy="11" r="6" stroke="#d72660" strokeWidth="2" fill="none" />
-                  <path d="M21 21L15 15" stroke="#d72660" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                  <circle cx="11" cy="11" r="6" stroke="currentColor" />
+                  <path d="M21 21L15 15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               )}
             </button>
