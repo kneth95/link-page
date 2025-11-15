@@ -13,7 +13,8 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Seen on Pink",
-  description: "capturing the essence of pink in every frame"
+  description: "capturing the essence of pink in every frame",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
 };
 
 export default function RootLayout({ children }) {
