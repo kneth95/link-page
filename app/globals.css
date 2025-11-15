@@ -288,7 +288,7 @@ svg { display: inline-block !important; }
   flex: 0 0 auto;
   margin-right: 6px;
   white-space: nowrap;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
 }
 
 .sticky-filter select {
@@ -296,7 +296,7 @@ svg { display: inline-block !important; }
   min-width: 110px;
   max-width: 160px; /* narrower */
   padding: 0.35rem 0.5rem;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   border-radius: 8px;
   border: 1px solid #ffd6e6;
   background: #fff;
@@ -360,6 +360,5 @@ svg { display: inline-block !important; }
   height: 32px;
   padding: 0 10px;
   min-width: 36px;
-  background-color: #00000000
-  ;
+  background-color: #00000000;
 }

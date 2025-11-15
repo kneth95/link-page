@@ -143,7 +143,7 @@ export default function Page() {
                   flex: 1,
                   padding: "0.6rem 0.75rem",
                   border: "1px solid rgba(219,124,173,0.8)",
-                  fontSize: "0.95rem",
+                  fontSize: "1rem",
                   outline: "none",
                   boxSizing: "border-box",
                   minWidth: 0,
@@ -164,7 +164,7 @@ export default function Page() {
                 }}
                 aria-label="Clear search query"
                 className="icon-button"
-                style={{ height: 36, padding: "0 12px", minWidth: 36, fontSize: "0.9rem", fontWeight: 600 }}
+                style={{ height: 36, padding: "0 12px", minWidth: 36, fontSize: "0.7rem", fontWeight: 600 }}
               >
                 Clear
               </button>
