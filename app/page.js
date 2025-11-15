@@ -164,7 +164,7 @@ export default function Page() {
                 }}
                 aria-label="Clear search query"
                 className="icon-button"
-                style={{ height: 36, padding: "0 12px", minWidth: 36, fontSize: "0.7rem", fontWeight: 600 }}
+                style={{ height: 36, padding: "0 12px", minWidth: 36, fontSize: "0.85rem", fontWeight: 600 }}
               >
                 Clear
               </button>
