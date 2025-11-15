@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+
 }
 
 @theme inline {
@@ -42,7 +44,6 @@ body {
 }
 
 .sticky-filter {
-  position: sticky;
   top: 0;
   background: #fff;
   z-index: 100;
@@ -118,3 +119,13 @@ button:hover {
     padding: 0.5rem;
   }
 }
+
+html, body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: #fff6fa; /* optional soft-pink background */
+  color: #4a2c3a;      /* optional text color */
+}
+
+svg { display: inline-block !important; }

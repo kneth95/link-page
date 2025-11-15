@@ -3,13 +3,15 @@
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   padding: 1rem;
-  margin: 1rem;
+  margin: 0; /* removed gap between product cards */
   width: 220px;
   text-align: center;
   background: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
+  align-self: stretch; /* allow card to stretch vertically to match siblings */
+  height: 100%; /* work with align-items: stretch on parent */
 }
 
 .product-card img {
@@ -21,14 +23,8 @@
 }
 
 .product-card h2 {
-  font-size: 1.1rem;
+  font-size: 1rem;
   margin: 0.5rem 0 1rem 0;
-}
-
-.product-card .product-links {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
 }
 
 .product-card button {
@@ -39,6 +35,36 @@
   font-weight: 500;
 }
 
+.product-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0; /* remove gap between cards */
+  justify-content: center;
+}
+
+
+/* new bottom container: pushes itself to the card bottom */
+.product-bottom {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto; /* push the whole bottom area to the card bottom */
+  align-items: center;
+}
+
+/* ensure meta fills width and items are spaced */
+.product-meta {
+  width: 100%;
+  display: flex;
+  flex-direction: column; /* stacked: brand on top, category below */
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0 0.2rem;
+  box-sizing: border-box;
+}
+
+/* keep existing styles for brand/category (no changes required) */
 .product-category {
   display: inline-block;
   background: #ffe4ec;
@@ -46,12 +72,44 @@
   font-size: 0.85rem;
   padding: 0.2rem 0.6rem;
   border-radius: 12px;
-  margin-bottom: 0.7rem;
+  margin: 0; /* remove bottom margin */
 }
 
 .product-brand {
   display: block;
   color: #555;
   font-size: 0.9rem;
-  margin-bottom: 0.3rem;
+  margin: 0; /* remove bottom margin; spacing handled by .product-meta gap */
+}
+
+/* remove individual auto margin on links since bottom container handles positioning */
+.product-card .product-links {
+  margin-top: 0; /* handled by .product-bottom */
+  display: flex;
+  gap: 0.5rem;
+}
+/* orangish Shopee button and blackish TikTok button */
+.product-links .shopee,
+.product-links a:first-child button {
+  background: #ff6a00; /* orangish */
+  color: #fff;
+  border: none;
+}
+
+.product-links .shopee:hover,
+.product-links a:first-child button:hover {
+  background: #ff5000;
+}
+
+/* TikTok - dark / blackish */
+.product-links .tiktok,
+.product-links a:last-child button {
+  background: #111; /* blackish */
+  color: #fff;
+  border: none;
+}
+
+.product-links .tiktok:hover,
+.product-links a:last-child button:hover {
+  opacity: 0.9;
 }

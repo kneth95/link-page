@@ -4,17 +4,24 @@ import "./Product.css";
 export default function Product({ picture, name, brand, category, shopeeUrl, tiktokUrl }) {
   return (
     <div className="product-card">
-      <img src={picture} alt={name} />
-      <h2>{name}</h2>
-      <span className="product-brand">{brand}</span>
-      <span className="product-category">{category}</span>
-      <div className="product-links">
-        <a href={shopeeUrl} target="_blank" rel="noopener noreferrer">
-          <button style={{ background: "#ff5722", color: "#fff" }}>Shopee</button>
-        </a>
-        <a href={tiktokUrl} target="_blank" rel="noopener noreferrer">
-          <button style={{ background: "#000", color: "#fff" }}>TikTok</button>
-        </a>
+      <img className="product-image" src={picture} alt={name} />
+      <h2 className="product-name">{name}</h2>
+
+      {/* moved brand/category and links into a bottom container so they stick together */}
+      <div className="product-bottom">
+        <div className="product-meta">
+          <span className="product-brand">{brand}</span>
+          <span className="product-category">{category}</span>
+        </div>
+
+        <div className="product-links">
+          <a href={shopeeUrl} target="_blank" rel="noopener noreferrer">
+            <button className="product-btn shopee">Shopee</button>
+          </a>
+          <a href={tiktokUrl} target="_blank" rel="noopener noreferrer">
+            <button className="product-btn tiktok">Tiktok</button>
+          </a>
+        </div>
       </div>
     </div>
   );
