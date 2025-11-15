@@ -10,7 +10,13 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+
   const searchRef = useRef(null);
+  const buttonRef = useRef(null);
+  const inputRef = useRef(null);
+
+  // popup style for the floating search input (position: fixed so it doesn't affect layout)
+  const [popupStyle, setPopupStyle] = useState({ display: "none" });
 
   useEffect(() => {
     async function fetchProducts() {
@@ -21,6 +27,71 @@ export default function Page() {
     }
     fetchProducts();
   }, []);
+
+  // recompute popup position based on sticky-filter position (full-width row under sticky-filter)
+  const computePopupPosition = () => {
+    const sticky = document.querySelector(".sticky-filter");
+    let top = 64; // fallback
+    if (sticky) {
+      const rect = sticky.getBoundingClientRect();
+      top = Math.max(0, Math.round(rect.bottom));
+    }
+    setPopupStyle({
+      position: "fixed",
+      top: `${top}px`,
+      left: 0,
+      right: 0,
+      zIndex: 1200,
+      display: "flex",
+      justifyContent: "center",
+      padding: "0",            // no extra padding so inner bar can be full width
+      boxSizing: "border-box",
+      pointerEvents: "auto",   // allow clicks so overlay can catch outside clicks
+    });
+  };
+
+  // show / hide handling: compute popup position and focus input when opened
+  useEffect(() => {
+    if (showSearch) {
+      computePopupPosition();
+      // small timeout to ensure style applied before focusing
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 40);
+    } else {
+      setPopupStyle({ display: "none" });
+    }
+  }, [showSearch]);
+
+  // recompute position on resize/scroll while visible
+  useEffect(() => {
+    if (!showSearch) return;
+    const onResize = () => computePopupPosition();
+    const onScroll = () => computePopupPosition();
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [showSearch]);
+
+  // click outside to close popup
+  useEffect(() => {
+    if (!showSearch) return;
+    const handler = (e) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(e.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target)
+      ) {
+        setShowSearch(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showSearch]);
 
   // Get unique categories
   const categories = Array.from(new Set(products.map(p => p.category)));
@@ -45,16 +116,6 @@ export default function Page() {
       );
     });
 
-  // icon click: focus input when empty, clear when there is text
-  const onIconClick = () => {
-    if (search) {
-      setSearch("");
-      searchRef.current?.focus();
-    } else {
-      searchRef.current?.focus();
-    }
-  };
-
   return (
     <div>
       <Banner />
@@ -76,67 +137,103 @@ export default function Page() {
             ))}
           </select>
 
-          {/* search icon / popup */}
+          {/* search icon (fixed-size rectangle) */}
           <div style={{ position: "relative", display: "inline-block" }}>
-            <button
-              className={`icon-button ${showSearch ? "open" : ""}`}
-  aria-pressed={showSearch}
-              onClick={() => {
-                if (!showSearch) {
-                  setShowSearch(true);
-                  setTimeout(() => searchRef.current?.focus(), 0);
-                } else {
-                  if (search) {
-                    setSearch("");
-                    setTimeout(() => searchRef.current?.focus(), 0);
-                  } else {
-                    setShowSearch(false);
-                  }
-                }
-              }}
-              aria-label={showSearch ? (search ? "Clear search" : "Close search") : "Open search"}
-            >
-              {showSearch && search ? (
-                <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <path d="M18 6L6 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M6 6L18 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-                  <circle cx="11" cy="11" r="6" stroke="currentColor" />
-                  <path d="M21 21L15 15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-            </button>
+              <button
+                ref={buttonRef}
+                className={`icon-button ${showSearch ? "open" : ""}`}
+                aria-pressed={showSearch}
+                onClick={() => {
+                  setShowSearch(prev => {
+                    const next = !prev;
+                    if (!next) {
+                      // toggling off => clear the query
+                      setSearch("");
+                    } else {
+                      // toggling on => open and focus, do NOT clear
+                      computePopupPosition();
+                      setTimeout(() => inputRef.current?.focus(), 40);
+                    }
+                    return next;
+                  });
+                }}
+                aria-label={showSearch ? (search ? "Clear search" : "Close search") : "Open search"}
+              >
+                {showSearch && search ? (
+                  <svg width="14" height="14" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <path d="M18 6L6 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M6 6L18 18" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <circle cx="11" cy="11" r="6" stroke="currentColor" />
+                    <path d="M21 21L15 15" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </button>
 
-            {showSearch && (
-              <input
-                ref={searchRef}
-                type="text"
-                placeholder="Search name or brand..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Escape") {
-                    setShowSearch(false);
-                    setSearch("");
-                  }
-                }}
-                style={{
-                  position: "absolute",
-                  right: 40,
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  padding: "0.45rem 0.6rem",
-                  borderRadius: 8,
-                  border: "1px solid #ffd6e6",
-                  width: 220,
-                  background: "#fff",
-                  zIndex: 200
-                }}
-              />
-            )}
-          </div>
+              {/* floating search input: full-width row under sticky-filter (fixed, non-disruptive) */}
+              {showSearch && (
+                <div
+                  style={popupStyle}
+                  // clicking the overlay (outside the inner bar) closes the search
+                  onMouseDown={() => setShowSearch(false)} // do NOT clear search here per request
+                >
+                  {/* inner container stops propagation so clicks inside don't close */}
+                  <div
+                    onMouseDown={(e) => e.stopPropagation()}
+                    style={{
+                      /* make the search bar span the entire viewport width and use flex so input expands */
+                      width: "80vw",
+                      maxWidth: "600px",
+                      marginLeft: "calc(50% - 50vw)", // full-bleed
+                      pointerEvents: "auto",
+                      borderRadius: 0,
+                      padding: "12px 16px",
+                      boxShadow: "0 6px 18px rgba(215,38,96,0)",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <input
+                      ref={inputRef}
+                      autoFocus
+                      type="text"
+                      className="search-popup-input"
+                      placeholder="Search name or brand..."
+                      value={search}
+                      onChange={e => setSearch(e.target.value)}
+                      onKeyDown={e => {
+                        if (e.key === "Escape") {
+                          setShowSearch(false);
+                          // don't clear search
+                        } else if (e.key === "Enter") {
+                          e.preventDefault();
+                          setShowSearch(false); // close on Enter, keep query
+                        }
+                      }}
+                      style={{
+                        flex: 1,                 // take all available width of the popup row
+                        padding: "0.6rem 0.75rem",
+                        borderRadius: 20,
+                        border: "1px solid rgba(219,124,173,0.8)",
+                        fontSize: "1rem",
+                        outline: "none",
+                        boxSizing: "border-box",
+                        background: "linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.05))",
+                        backdropFilter: "blur(30px) saturate(180%)",
+                        WebkitBackdropFilter: "blur(30px) saturate(180%)",
+                        minWidth: 0,             // allow flex to shrink correctly
+                      }}
+                    />
+
+                    {/* Clear button inside the input area (does not close the popup) */}
+          
+                  </div>
+                </div>
+              )}
+            </div>
         </div>
       </div>
 

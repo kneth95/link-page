@@ -2,9 +2,9 @@
   border: 1px solid #eee;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  padding: 1rem;
+  padding: 0.8rem 0rem;
   margin: 0; /* removed gap between product cards */
-  width: 220px;
+  width: 180px;
   text-align: center;
   background: #fff;
   display: flex;
@@ -23,7 +23,7 @@
 }
 
 .product-card h2 {
-  font-size: 1rem;
+  font-size: 0.8rem;
   margin: 0.5rem 0 1rem 0;
 }
 
@@ -38,7 +38,7 @@
 .product-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 0; /* remove gap between cards */
+  gap: 0.3rem; /* remove gap between cards */
   justify-content: center;
 }
 
@@ -48,7 +48,7 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.1rem;
   margin-top: auto; /* push the whole bottom area to the card bottom */
   align-items: center;
 }
@@ -59,8 +59,8 @@
   display: flex;
   flex-direction: column; /* stacked: brand on top, category below */
   align-items: center;
-  gap: 0.25rem;
-  padding: 0 0.2rem;
+  gap: 0.1rem;
+  padding: 0.1rem 0rem;
   box-sizing: border-box;
 }
 
@@ -69,8 +69,8 @@
   display: inline-block;
   background: #ffe4ec;
   color: #d72660;
-  font-size: 0.85rem;
-  padding: 0.2rem 0.6rem;
+  font-size: 0.65rem;
+  padding: 0.2rem 0.3rem;
   border-radius: 12px;
   margin: 0; /* remove bottom margin */
 }
@@ -78,15 +78,18 @@
 .product-brand {
   display: block;
   color: #555;
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   margin: 0; /* remove bottom margin; spacing handled by .product-meta gap */
 }
 
 /* remove individual auto margin on links since bottom container handles positioning */
 .product-card .product-links {
   margin-top: 0; /* handled by .product-bottom */
+  padding:0 1rem;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  width: 100%;
+  justify-content: center;
 }
 /* orangish Shopee button and blackish TikTok button */
 .product-links .shopee,
@@ -94,6 +97,7 @@
   background: #ff6a00; /* orangish */
   color: #fff;
   border: none;
+  font-size:0.75rem;
 }
 
 .product-links .shopee:hover,
@@ -107,9 +111,23 @@
   background: #111; /* blackish */
   color: #fff;
   border: none;
+  font-size:0.75rem;
+
 }
 
 .product-links .tiktok:hover,
 .product-links a:last-child button:hover {
   opacity: 0.9;
+}
+
+.product-card .product-links a,
+.product-card .product-links button {
+  flex: 1;
+  min-width: 0; /* allow flex to shrink on narrow screens */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0rem;
+  border-radius: 6px;
+  box-sizing: border-box;
 }

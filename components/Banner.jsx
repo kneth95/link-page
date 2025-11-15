@@ -2,7 +2,6 @@ import React from "react";
 
 export default function Banner() {
   const wrapper = {
-    position: "sticky",
     top: 0,
     zIndex: 120,
     color: "#4a2c3a",
@@ -14,8 +13,6 @@ export default function Banner() {
 };
 
   const overlay = {
-    background: "linear-gradient(0deg, rgba(255,244,249,0.9), rgba(255,244,249,0.6))",
-    borderBottom: "1px solid #ffd6e6",
     padding: "1rem 0.75rem",
     display: "flex",
     alignItems: "center",
@@ -23,6 +20,11 @@ export default function Banner() {
     maxWidth: 1200,
     margin: "0 auto",
     borderRadius: 8,
+    background: "rgba(255, 255, 255, 0.2)",
+    backdropFilter: "blur(20px)",
+    WebkitBackdropFilter: "blur(20px)",
+    borderRadius: "16px",
+    border: "1px solid rgba(255, 255, 255, 0.3)",
   };
 
   const logo = {

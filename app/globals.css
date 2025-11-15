@@ -189,3 +189,160 @@ svg { display: inline-block !important; }
   stroke: currentColor !important;
   fill: none !important;
 }
+
+.sticky-filter > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap; /* keep everything on one row */
+  justify-content: flex-start;
+  overflow-x: auto; /* allow horizontal scroll on very small screens instead of wrapping */
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0.5rem;
+}
+
+/* make individual controls behave and avoid collapsing */
+.sticky-filter label {
+  flex: 0 0 auto;
+  margin-right: 6px;
+  white-space: nowrap;
+}
+.sticky-filter select {
+  flex: 0 0 auto;
+  min-width: 120px;
+  max-width: 45%;
+}
+.sticky-filter .icon-button {
+  flex: 0 0 auto;
+  margin-left: 4px;
+}
+
+/* target the inline search input (desktop uses absolute positioning) */
+.sticky-filter input[type="text"] {
+  max-width: 320px;
+}
+
+/* Mobile adjustments: keep select+icon on same row; allow scroll */
+@media (max-width: 600px) {
+  .sticky-filter {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .sticky-filter > div {
+    gap: 0.4rem;
+    justify-content: flex-start;
+  }
+
+  .sticky-filter label {
+    /* keep label compact */
+    margin-right: 6px;
+  }
+
+  /* allow the select to stay compact so icon can sit next to it */
+  .sticky-filter select {
+    min-width: 110px;
+    max-width: none;
+  }
+
+  .sticky-filter .icon-button {
+    order: 0;
+  }
+
+  /* keep the search input from forcing a wrap — allow it to appear as overlay or be scrolled to */
+  .sticky-filter input[type="text"] {
+    position: static !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 220px;
+  }
+}
+
+/* make the sticky filter bar narrower and centered */
+.sticky-filter {
+  background: #ffe4ec;
+  border-bottom: 1px solid #ffd6e6;
+  box-shadow: 0 2px 8px rgba(215,38,96,0.04);
+
+  /* reduced vertical padding and constrained width */
+  padding: 0.45rem 0;
+  max-width: 980px;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+}
+
+/* keep controls on one row but tighter spacing */
+.sticky-filter > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: nowrap;
+  justify-content: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 0.5rem;
+}
+
+/* smaller select and search control sizes */
+.sticky-filter label {
+  flex: 0 0 auto;
+  margin-right: 6px;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+.sticky-filter select {
+  flex: 0 0 auto;
+  min-width: 110px;
+  max-width: 160px; /* narrower */
+  padding: 0.35rem 0.5rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 1px solid #ffd6e6;
+  background: #fff;
+}
+
+.sticky-filter input[type="text"] {
+  max-width: 180px; /* smaller search input */
+  padding: 0.35rem 0.6rem;
+  border-radius: 8px;
+  border: 1px solid #ffd6e6;
+  background: #fff;
+}
+
+/* make icon-button more compact in the filter row */
+.sticky-filter .icon-button {
+  flex: 0 0 auto;
+  margin-left: 6px;
+  height: 34px;
+  padding: 0 8px;
+  min-width: 34px;
+}
+
+/* mobile: allow horizontal scroll but keep compact sizes */
+@media (max-width: 420px) {
+  .sticky-filter select {
+    min-width: 100px;
+    max-width: 140px;
+  }
+  .sticky-filter input[type="text"] {
+    max-width: 140px;
+  }
+}
+
+/* Ensure popup search input always fills its popup row */
+.search-popup-input {
+  flex: 1 !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important; /* important for flex children to shrink correctly */
+  box-sizing: border-box;
+}
+
+/* optional: slightly larger font in popup */
+.search-popup-input {
+  font-size: 1rem;
+  padding: 0.65rem 0.8rem;
+}
