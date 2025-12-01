@@ -78,6 +78,8 @@ export default function ManageProducts() {
   const [editIdx, setEditIdx] = useState(null);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+
+  // Fetch products helper
   const fetchProducts = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -86,7 +88,8 @@ export default function ManageProducts() {
     if (!error) setProducts(data || []);
     setLoading(false);
   };
-  
+
+  // === keep all useEffect hooks here (before any conditional return) ===
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -96,11 +99,20 @@ export default function ManageProducts() {
     checkUser();
   }, []);
 
-  // Fetch products from Supabase
   useEffect(() => {
     fetchProducts();
   }, []);
-  
+
+  // Scroll edit form into view when editIdx (product id) changes
+  useEffect(() => {
+    if (editIdx === null) return;
+    const t = setTimeout(() => {
+      const el = document.getElementById(`edit-form-${editIdx}`);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+    return () => clearTimeout(t);
+  }, [editIdx]);
+
   // Replace with your admin email
   const isAdmin = !!user;
   
@@ -192,8 +204,8 @@ export default function ManageProducts() {
   const handleSubmit = async e => {
   e.preventDefault();
   if (editIdx !== null) {
-    // Edit mode
-    const productId = products[editIdx].id;
+    // Edit mode — editIdx now stores product id
+    const productId = editIdx;
     const { error } = await supabase.from("products").update(form).eq("id", productId);
     if (error) {
       alert("Failed to update product: " + error.message);
@@ -221,13 +233,15 @@ export default function ManageProducts() {
   await fetchProducts();
 };
 
-  // Edit product
-  const handleEdit = idx => {
-    setForm(products[idx]);
-    setEditIdx(idx);
+  // Edit product — use product id (not index) so edits remain correct when list is filtered
+  const handleEdit = (id) => {
+    const p = products.find(pr => pr.id === id);
+    if (!p) return;
+    setForm(p);
+    setEditIdx(id); // store id instead of index
     setTab("view");
   };
-
+  
   // Delete product from Supabase
   const handleDelete = async id => {
   const confirmDelete = window.confirm("Are you sure you want to delete this product?");
@@ -235,7 +249,8 @@ export default function ManageProducts() {
     await supabase.from("products").delete().eq("id", id);
     // Always fetch latest products after delete
     await fetchProducts();
-    if (editIdx !== null && products[editIdx].id === id) {
+    // if currently editing the deleted product, reset edit state
+    if (editIdx !== null && editIdx === id) {
       setEditIdx(null);
       setForm({
         name: "",
@@ -248,7 +263,7 @@ export default function ManageProducts() {
     }
   }
 };
-
+  
   // Filter and sort products for display
   const filteredProducts = products
     .filter(product =>
@@ -257,7 +272,7 @@ export default function ManageProducts() {
       product.category.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => a.name.localeCompare(b.name));
-
+  
   return (
     <div style={{ maxWidth: 600, margin: "2rem auto" }}>
       <h1>Manage Products</h1>
@@ -347,7 +362,7 @@ export default function ManageProducts() {
             style={{ marginBottom: "1rem", padding: "0.5rem", width: "100%" }}
           />
           {editIdx !== null && (
-            <form onSubmit={handleSubmit} style={{ marginBottom: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <form onSubmit={handleSubmit} style={{ marginBottom: "2rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px", display: "flex", flexDirection: "column", gap: "0.5rem" }} id={`edit-form-${editIdx}`}>
               <input name="name" value={form.name} onChange={handleChange} placeholder="Name" required />
               <AutocompleteInput
                 label="Brand"
@@ -400,11 +415,11 @@ export default function ManageProducts() {
             {loading ? (
               <div>Loading...</div>
             ) : (
-              filteredProducts.map((product, idx) => (
+              filteredProducts.map((product) => (
                 <div key={product.id} style={{ position: "relative", marginBottom: "1rem" }}>
                   <Product {...product} />
                   <div style={{ position: "absolute", top: 10, right: 10 }}>
-                    <button onClick={() => handleEdit(idx)} style={{ marginRight: "0.5rem" }}>Edit</button>
+                    <button onClick={() => handleEdit(product.id)} style={{ marginRight: "0.5rem" }}>Edit</button>
                     <button onClick={() => handleDelete(product.id)}>Delete</button>
                   </div>
                 </div>
