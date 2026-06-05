@@ -16,6 +16,7 @@ export default async function Page() {
       next: { revalidate: 3600 },
     }
   );
+  if (!res.ok) console.error(`Supabase fetch failed: ${res.status}`);
   const products = res.ok ? await res.json() : [];
 
   return (
