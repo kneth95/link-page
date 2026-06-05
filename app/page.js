@@ -12,6 +12,7 @@ export default async function Page() {
       headers: {
         apikey: SUPABASE_ANON_KEY,
         Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        Accept: "application/json",
       },
       next: { revalidate: 3600 },
     }

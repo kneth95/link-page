@@ -7,7 +7,7 @@ export default function Product({ picture, name, brand, category, shopeeUrl, tik
     <div className="product-card">
       <Image
         className="product-image"
-        src={picture}
+        src={picture || "/sop-icon.ico"}
         alt={name}
         width={120}
         height={120}
