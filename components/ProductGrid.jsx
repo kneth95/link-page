@@ -2,20 +2,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import Product from "./Product";
 
-export default function ProductGrid({ products }) {
+export default function ProductGrid({ products = [] }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
 
-  const buttonRef = useRef(null);
+  const containerRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
     if (!showSearch) return;
     const handler = (e) => {
-      const sticky = document.querySelector(".sticky-filter");
-      if (!sticky) return;
-      if (!sticky.contains(e.target)) {
+      if (!containerRef.current?.contains(e.target)) {
         setShowSearch(false);
       }
     };
@@ -23,7 +21,7 @@ export default function ProductGrid({ products }) {
     return () => document.removeEventListener("mousedown", handler);
   }, [showSearch]);
 
-  const categories = Array.from(new Set(products.map((p) => p.category)));
+  const categories = Array.from(new Set(products.map((p) => p.category))).sort();
 
   const categoryCounts = categories.reduce((acc, cat) => {
     acc[cat] = products.filter((p) => p.category === cat).length;
@@ -48,6 +46,7 @@ export default function ProductGrid({ products }) {
   return (
     <>
       <div
+        ref={containerRef}
         className="sticky-filter"
         style={{ textAlign: "center", padding: "0.5rem 0", zIndex: 130 }}
       >
@@ -77,7 +76,6 @@ export default function ProductGrid({ products }) {
 
           <div style={{ position: "relative", display: "inline-block" }}>
             <button
-              ref={buttonRef}
               className={`icon-button ${showSearch ? "open" : ""}`}
               aria-pressed={showSearch}
               onClick={() => {
@@ -210,7 +208,7 @@ export default function ProductGrid({ products }) {
 
       <div className="product-list">
         {[...filteredProducts]
-          .sort((a, b) => a.name.localeCompare(b.name))
+          .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
           .map((product) => (
             <div key={product.id} style={{ marginBottom: "1rem" }}>
               <Product {...product} />
