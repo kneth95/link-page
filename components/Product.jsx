@@ -1,13 +1,20 @@
 import React from "react";
+import Image from "next/image";
 import "./Product.css";
 
 export default function Product({ picture, name, brand, category, shopeeUrl, tiktokUrl }) {
   return (
     <div className="product-card">
-      <img className="product-image" src={picture} alt={name} />
+      <Image
+        className="product-image"
+        src={picture}
+        alt={name}
+        width={120}
+        height={120}
+        style={{ objectFit: "cover" }}
+      />
       <h2 className="product-name">{name}</h2>
 
-      {/* moved brand/category and links into a bottom container so they stick together */}
       <div className="product-bottom">
         <div className="product-meta">
           <span className="product-brand">{brand}</span>
